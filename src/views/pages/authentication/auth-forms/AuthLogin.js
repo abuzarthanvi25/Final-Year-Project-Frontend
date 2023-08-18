@@ -6,10 +6,8 @@ import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   FormControl,
-  FormControlLabel,
   FormHelperText,
   Grid,
   IconButton,
@@ -39,11 +37,12 @@ import Google from 'assets/images/icons/social-google.svg';
 import { useAuth } from 'utils/authentication/authProvider';
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
+import ForgotPasswordModal from 'ui-component/custom-components/ForgotPasswordModal';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ ...others }) => {
-  const { signIn, currentUser, googleSignIn } = useAuth();
+  const { signIn, currentUser, googleSignIn, handleForgotPassword } = useAuth();
   const theme = useTheme();
   const scriptedRef = useScriptRef();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
@@ -51,8 +50,9 @@ const FirebaseLogin = ({ ...others }) => {
 
   const navigate = useNavigate();
 
-  const [checked, setChecked] = useState(true);
+  const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const googleHandler = async () => {
     setError(null);
@@ -86,19 +86,41 @@ const FirebaseLogin = ({ ...others }) => {
     if (currentUser) {
       navigate('/');
     }
-  }, [currentUser]);
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     if (error) {
       setTimeout(() => setError(null), 4000);
     }
-  }, [error]);
+    if (message) {
+      setTimeout(() => setMessage(null), 4000);
+    }
+  }, [error, message]);
+
+  const toggleModal = (toggle) => {
+    setOpen(toggle);
+  };
+
+  const onClose = (message) => {
+    setMessage(message);
+  };
+
+  const exceptionHandling = (error) => {
+    setError(error);
+  };
 
   return (
     <>
       <>
         <Grid container direction="column" justifyContent="center" spacing={2}>
           <Grid item xs={12}>
+            <ForgotPasswordModal
+              handleClose={() => toggleModal(false)}
+              onClose={() => onClose('Password reset email sent. Check your inbox.')}
+              open={open}
+              sendEmail={handleForgotPassword}
+              exceptionHandling={exceptionHandling}
+            />
             <AnimateButton>
               <Button
                 disableElevation
@@ -154,15 +176,15 @@ const FirebaseLogin = ({ ...others }) => {
               <Typography variant="subtitle1">Sign in with Email address</Typography>
             </Box>
           </Grid>
-          {error && (
+          {error || message ? (
             <Grid item xs={12} container alignItems="center" justifyContent="center">
               <Stack sx={{ width: '100%' }}>
-                <Alert variant="filled" severity="error">
-                  {error} — check it out!
+                <Alert variant="filled" severity={error ? 'error' : 'success'}>
+                  {error ?? message} {error && '— check it out!'}
                 </Alert>
               </Stack>
             </Grid>
-          )}
+          ) : null}
         </Grid>
 
         <Formik
@@ -245,13 +267,12 @@ const FirebaseLogin = ({ ...others }) => {
                 )}
               </FormControl>
               <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                <FormControlLabel
-                  control={
-                    <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
-                  }
-                  label="Remember me"
-                />
-                <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: 'none', cursor: 'pointer' }}>
+                <Typography
+                  onClick={() => toggleModal(true)}
+                  variant="subtitle1"
+                  color="secondary"
+                  sx={{ textDecoration: 'none', cursor: 'pointer' }}
+                >
                   Forgot Password?
                 </Typography>
               </Stack>

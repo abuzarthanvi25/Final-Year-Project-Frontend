@@ -92,6 +92,12 @@ const FirebaseRegister = ({ ...others }) => {
     changePassword('123456');
   }, []);
 
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => setError(null), 4000);
+    }
+  }, [error]);
+
   return (
     <>
       {currentUser ? (
