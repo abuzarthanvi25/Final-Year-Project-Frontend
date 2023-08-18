@@ -4,7 +4,8 @@ const config = {
   basename: '',
   defaultPath: '/dashboard/default',
   fontFamily: `'Poppins', sans-serif`,
-  borderRadius: 12
+  borderRadius: 12,
+  projectName: 'SkillSift.ai'
 };
 
 export default config;

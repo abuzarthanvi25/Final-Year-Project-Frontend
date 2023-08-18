@@ -7,9 +7,10 @@ import { Divider, Grid, Stack, Typography, useMediaQuery } from '@mui/material';
 // project imports
 import AuthWrapper1 from '../AuthWrapper1';
 import AuthCardWrapper from '../AuthCardWrapper';
-import Logo from 'ui-component/Logo';
+// import Logo from 'ui-component/Logo';
 import AuthRegister from '../auth-forms/AuthRegister';
 import AuthFooter from 'ui-component/cards/AuthFooter';
+// import CONFIG from 'config';
 
 // assets
 
@@ -21,17 +22,12 @@ const Register = () => {
 
   return (
     <AuthWrapper1>
-      <Grid container direction="column" justifyContent="flex-end" sx={{ minHeight: '100vh' }}>
+      <Grid container direction="column" justifyContent="flex-end" sx={{ minHeight: '90vh' }}>
         <Grid item xs={12}>
           <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: 'calc(100vh - 68px)' }}>
             <Grid item sx={{ m: { xs: 1, sm: 3 }, mb: 0 }}>
               <AuthCardWrapper>
                 <Grid container spacing={2} alignItems="center" justifyContent="center">
-                  <Grid item sx={{ mb: 3 }}>
-                    <Link to="#">
-                      <Logo />
-                    </Link>
-                  </Grid>
                   <Grid item xs={12}>
                     <Grid container direction={matchDownSM ? 'column-reverse' : 'row'} alignItems="center" justifyContent="center">
                       <Grid item>
@@ -54,7 +50,7 @@ const Register = () => {
                   </Grid>
                   <Grid item xs={12}>
                     <Grid item container direction="column" alignItems="center" xs={12}>
-                      <Typography component={Link} to="/pages/login/login3" variant="subtitle1" sx={{ textDecoration: 'none' }}>
+                      <Typography component={Link} to="/pages/login" variant="subtitle1" sx={{ textDecoration: 'none' }}>
                         Already have an account?
                       </Typography>
                     </Grid>

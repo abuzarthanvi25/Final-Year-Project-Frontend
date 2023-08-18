@@ -12,8 +12,6 @@ export const initialState = {
   opened: true
 };
 
-console.log(config)
-
 // ==============================|| CUSTOMIZATION REDUCER ||============================== //
 
 const customizationReducer = (state = initialState, action) => {

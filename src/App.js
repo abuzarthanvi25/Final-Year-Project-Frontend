@@ -12,18 +12,25 @@ import themes from 'themes';
 // project imports
 import NavigationScroll from 'layout/NavigationScroll';
 
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from 'utils/authentication/firebase';
+import { useAuth } from 'utils/authentication/authProvider';
+import { useNavigate } from 'react-router';
+
+initializeApp(firebaseConfig);
+
 // ==============================|| APP ||============================== //
 
 const App = () => {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const customization = useSelector((state) => state.customization);
 
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={themes(customization)}>
         <CssBaseline />
-        <NavigationScroll>
-          <Routes />
-        </NavigationScroll>
+        <NavigationScroll>{currentUser ? <Routes /> : navigate('/pages/login')}</NavigationScroll>
       </ThemeProvider>
     </StyledEngineProvider>
   );
