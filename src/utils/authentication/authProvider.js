@@ -1,5 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { auth } from './firebase'; // Path to your firebase.js file
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
+  sendPasswordResetEmail
+} from 'firebase/auth';
+
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from 'utils/authentication/firebase';
 
 const AuthContext = React.createContext();
 
@@ -11,20 +22,34 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  initializeApp(firebaseConfig);
+
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
+  provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+
   function signUp(email, password) {
-    return auth.createUserWithEmailAndPassword(email, password);
+    return createUserWithEmailAndPassword(auth, email, password);
   }
 
   function signIn(email, password) {
-    return auth.signInWithEmailAndPassword(email, password);
+    return signInWithEmailAndPassword(auth, email, password);
   }
 
-  function signOut() {
-    return auth.signOut();
+  function signOutUser() {
+    return signOut(auth);
+  }
+
+  function googleSignIn() {
+    return signInWithPopup(auth, provider);
+  }
+
+  function handleForgotPassword(email) {
+    return sendPasswordResetEmail(auth, email);
   }
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
       setLoading(false);
     });
@@ -36,12 +61,10 @@ export function AuthProvider({ children }) {
     currentUser,
     signUp,
     signIn,
-    signOut
+    signOutUser,
+    googleSignIn,
+    handleForgotPassword
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 }

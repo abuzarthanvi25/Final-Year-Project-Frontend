@@ -13,6 +13,9 @@ import { store } from 'store';
 import 'assets/scss/style.scss';
 import config from './config';
 
+// authentication provider
+import { AuthProvider } from './utils/authentication/authProvider';
+
 // ==============================|| REACT DOM RENDER  ||============================== //
 
 const container = document.getElementById('root');
@@ -20,7 +23,9 @@ const root = createRoot(container); // createRoot(container!) if you use TypeScr
 root.render(
   <Provider store={store}>
     <BrowserRouter basename={config.basename}>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </Provider>
 );

@@ -1,16 +1,9 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
-
-const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_AUTH_DOMAIN',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_STORAGE_BUCKET',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_APP_ID'
+export const firebaseConfig = {
+  apiKey: 'AIzaSyBPyTLb78_Yja5A9qzrYYIUtlI2PkWMGu4',
+  authDomain: 'skillsift-ai.firebaseapp.com',
+  projectId: 'skillsift-ai',
+  storageBucket: 'skillsift-ai.appspot.com',
+  messagingSenderId: '907813576210',
+  appId: '1:907813576210:web:c963d3b34434cf13ed82cb',
+  measurementId: 'G-JN5KK9Q7YZ'
 };
-
-const app = firebase.initializeApp(firebaseConfig);
-
-export const auth = app.auth();
-export default app;

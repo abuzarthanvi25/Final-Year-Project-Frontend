@@ -12,7 +12,7 @@ const AuthCardWrapper = ({ children, ...other }) => (
   <MainCard
     sx={{
       maxWidth: { xs: 400, lg: 475 },
-      margin: { xs: 2.5, md: 3 },
+      margin: { xs: 2.5, md: 2 },
       '& > *': {
         flexGrow: 1,
         flexBasis: '50%'
