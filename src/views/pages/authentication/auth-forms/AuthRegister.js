@@ -18,7 +18,9 @@ import {
   InputLabel,
   OutlinedInput,
   Typography,
-  useMediaQuery
+  useMediaQuery,
+  Stack,
+  Alert
 } from '@mui/material';
 
 // third party
@@ -48,8 +50,9 @@ const FirebaseRegister = ({ ...others }) => {
 
   const [strength, setStrength] = useState(0);
   const [level, setLevel] = useState();
+  const [error, setError] = useState(null);
 
-  const { signUp, currentUser } = useAuth();
+  const { signUp, currentUser, googleSignIn } = useAuth();
 
   const navigate = useNavigate();
 
@@ -57,21 +60,18 @@ const FirebaseRegister = ({ ...others }) => {
     try {
       await signUp(email, password);
       navigate('/');
-      // Signup successful, you might want to redirect or show a success message
     } catch (error) {
-      console.log(error);
-      // Handle signup error, show an error message
+      setError(error.message);
     }
   };
 
-  useEffect(() => {
-    if (currentUser) {
-      navigate('/');
-    }
-  }, [currentUser]);
-
   const googleHandler = async () => {
-    console.error('Register');
+    setError(null);
+    try {
+      await googleSignIn();
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   const handleClickShowPassword = () => {
@@ -121,8 +121,8 @@ const FirebaseRegister = ({ ...others }) => {
                 if (scriptedRef.current) {
                   setStatus({ success: true });
                   setSubmitting(false);
+                  handleSignUp(values);
                 }
-                handleSignUp(values);
               } catch (err) {
                 console.error(err);
                 if (scriptedRef.current) {
@@ -176,6 +176,15 @@ const FirebaseRegister = ({ ...others }) => {
                       >
                         OR
                       </Button>
+                      {error && (
+                        <Grid item xs={12} container alignItems="center" justifyContent="center">
+                          <Stack sx={{ width: '100%' }}>
+                            <Alert variant="filled" severity="error">
+                              {error} — check it out!
+                            </Alert>
+                          </Stack>
+                        </Grid>
+                      )}
                       <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
                     </Box>
                   </Grid>

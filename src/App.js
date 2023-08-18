@@ -16,6 +16,7 @@ import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from 'utils/authentication/firebase';
 import { useAuth } from 'utils/authentication/authProvider';
 import { useNavigate } from 'react-router';
+import { useEffect } from 'react';
 
 initializeApp(firebaseConfig);
 
@@ -26,11 +27,19 @@ const App = () => {
   const navigate = useNavigate();
   const customization = useSelector((state) => state.customization);
 
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/pages/login');
+    }
+  }, [currentUser]);
+
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={themes(customization)}>
         <CssBaseline />
-        <NavigationScroll>{currentUser ? <Routes /> : navigate('/pages/login')}</NavigationScroll>
+        <NavigationScroll>
+          <Routes />
+        </NavigationScroll>
       </ThemeProvider>
     </StyledEngineProvider>
   );
