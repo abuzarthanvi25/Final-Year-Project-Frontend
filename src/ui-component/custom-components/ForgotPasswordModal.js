@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Backdrop, Fade, TextField, Button, Box, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import PropTypes from 'prop-types';
 
 const ForgotPasswordModal = ({ open, onClose, sendEmail, handleClose, exceptionHandling }) => {
   const validationSchema = Yup.object().shape({
@@ -91,6 +92,14 @@ const ForgotPasswordModal = ({ open, onClose, sendEmail, handleClose, exceptionH
       </Box>
     </Modal>
   );
+};
+
+ForgotPasswordModal.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  sendEmail: PropTypes.func,
+  handleClose: PropTypes.func,
+  exceptionHandling: PropTypes.func
 };
 
 export default ForgotPasswordModal;
