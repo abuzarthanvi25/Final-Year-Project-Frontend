@@ -38,8 +38,8 @@ const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
   zIndex: 1,
   color: '#fff',
-  width: 50,
-  height: 50,
+  width: 35,
+  height: 35,
   display: 'flex',
   borderRadius: '50%',
   justifyContent: 'center',
@@ -72,7 +72,7 @@ ColorlibStepIcon.propTypes = {
   /**
    * The label displayed in the step icon.
    */
-  icon: PropTypes.func
+  Icon: PropTypes.func
 };
 
 const stepsLocal = [
@@ -98,7 +98,7 @@ const stepsLocal = [
 
 export default function CustomizedSteppers({ steps = stepsLocal }) {
   return (
-    <Stack sx={{ width: '100%' }} spacing={4}>
+    <Stack sx={{ width: '100%' }} spacing={2}>
       <Stepper alternativeLabel activeStep={getActiveIndex(steps)} connector={<ColorlibConnector />}>
         {steps.map((label, index) => (
           <Step key={index}>
