@@ -13,7 +13,7 @@ const pages = {
       id: 'util-typography',
       title: 'Take an interview',
       type: 'item',
-      url: '/',
+      url: '/take-an-interview',
       icon: AddBoxIcon,
       breadcrumbs: false
     },
