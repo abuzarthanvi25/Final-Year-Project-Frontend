@@ -4,7 +4,7 @@ import SchoolIcon from '@mui/icons-material/School';
 // ==============================|| UTILITIES MENU ITEMS ||============================== //
 
 const utilities = {
-  id: 'utilities',
+  id: 'employmentAssistance',
   title: 'Employment Assistance',
   type: 'group',
   children: [

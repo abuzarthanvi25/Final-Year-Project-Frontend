@@ -5,7 +5,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // ==============================|| UTILITIES MENU ITEMS ||============================== //
 
 const pages = {
-  id: 'utilities',
+  id: 'interviews',
   title: 'Interviews',
   type: 'group',
   children: [
