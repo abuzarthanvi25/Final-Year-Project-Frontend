@@ -86,7 +86,7 @@ const MenuCard = () => {
 
   return (
     <CardStyle>
-      <CardContent sx={{ p: 2 }}>
+      <CardContent sx={{ p: 3 }}>
         <List sx={{ p: 0, m: 0 }}>
           <ListItem alignItems="flex-start" disableGutters sx={{ p: 0 }}>
             <ListItemAvatar sx={{ mt: 0 }}>
@@ -109,10 +109,10 @@ const MenuCard = () => {
               sx={{ mt: 0 }}
               primary={
                 <Typography variant="subtitle1" sx={{ color: theme.palette.primary[800] }}>
-                  Get Extra Space
+                  Get Extra Credits
                 </Typography>
               }
-              secondary={<Typography variant="caption"> 28/23 GB</Typography>}
+              secondary={<Typography variant="caption"> 10000/8000 Credits</Typography>}
             />
           </ListItem>
         </List>
