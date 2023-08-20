@@ -3,6 +3,7 @@ import { Formik, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, Fade, Grid, TextField } from '@mui/material';
 import { gridSpacing } from 'store/constant';
+import { useSelector } from 'react-redux';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
@@ -22,6 +23,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const DetailsSubmission = ({ handleSubmitDetails, isSubmitted }) => {
+  const { userDetails } = useSelector((state) => state.interview);
+
   const handleSubmit = async (values) => {
     // Ensure that the values are parsed to integers
     values.age = parseInt(values.age);
@@ -36,14 +39,18 @@ const DetailsSubmission = ({ handleSubmitDetails, isSubmitted }) => {
       <div style={{ pointerEvents: isSubmitted ? 'none' : 'all' }}>
         <Box>
           <Formik
-            initialValues={{
-              name: '',
-              father_name: '',
-              age: '',
-              university: '',
-              prior_experience: '',
-              skill_and_experience: ['']
-            }}
+            initialValues={
+              userDetails
+                ? { ...userDetails }
+                : {
+                    name: '',
+                    father_name: '',
+                    age: '',
+                    university: '',
+                    prior_experience: '',
+                    skill_and_experience: ['']
+                  }
+            }
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >

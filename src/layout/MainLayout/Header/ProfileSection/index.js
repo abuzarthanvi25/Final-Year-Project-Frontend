@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -36,11 +36,13 @@ import Transitions from 'ui-component/extended/Transitions';
 import { IconLogout, IconSettings, IconUser } from '@tabler/icons';
 import { useAuth } from 'utils/authentication/authProvider';
 import { toTitleCase } from 'utils/helpers';
+import { resetStateRequest } from 'store/reducers/interviewReducer';
 
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = () => {
   const { currentUser, signOutUser } = useAuth();
+  const dispatch = useDispatch();
 
   const name = currentUser?.email?.split('@')[0];
 
@@ -58,6 +60,7 @@ const ProfileSection = () => {
   const anchorRef = useRef(null);
   const handleLogout = async () => {
     await signOutUser();
+    dispatch(resetStateRequest());
   };
 
   const handleClose = (event) => {

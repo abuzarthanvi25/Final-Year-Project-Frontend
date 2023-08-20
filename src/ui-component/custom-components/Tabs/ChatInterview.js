@@ -3,6 +3,7 @@ import { Box, Button, Container, TextField, Stepper, Step, StepLabel, Typography
 import { useFormik } from 'formik';
 import PropTypes from 'prop-types';
 import CustomModal from '../CustomModal';
+import { useSelector } from 'react-redux';
 
 const QS = [
   'What is your name?',
@@ -19,6 +20,8 @@ const ChatInterview = ({ questions = QS, handleBackStep }) => {
   const [interviewStarted, setInterviewStarted] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [timer, setTimer] = useState(0);
+
+  const { userDetails } = useSelector((state) => state.interview);
 
   const formik = useFormik({
     initialValues: {
@@ -92,6 +95,7 @@ const ChatInterview = ({ questions = QS, handleBackStep }) => {
         subtitle=""
         disableBackdropClick
         onConfirm={handleBeginInterview}
+        disabled={!userDetails}
       />
       <CustomModal
         open={open}

@@ -8,6 +8,8 @@ import TabPanel from './Tabs/TabPanel';
 import ChatInterview from './Tabs/ChatInterview';
 import VoiceToVoiceInterview from './Tabs/VoiceToVoiceInterview';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 function a11yProps(index) {
   return {
@@ -18,6 +20,15 @@ function a11yProps(index) {
 
 const InterviewMain = ({ handleBackStep }) => {
   const [value, setValue] = useState(0);
+  const [questions, setQuestions] = useState([]);
+
+  const { allQuestions } = useSelector((state) => state.interview);
+
+  useEffect(() => {
+    if (allQuestions) {
+      setQuestions(allQuestions);
+    }
+  }, [allQuestions]);
 
   const handleChange = (_, newValue) => {
     setValue(newValue);
@@ -34,7 +45,7 @@ const InterviewMain = ({ handleBackStep }) => {
         </Grid>
         <Grid item lg={11} md={10} sm={12} xs={12}>
           <TabPanel value={value} index={0}>
-            <ChatInterview handleBackStep={handleBackStep} />
+            <ChatInterview questions={questions} handleBackStep={handleBackStep} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <VoiceToVoiceInterview />

@@ -12,6 +12,9 @@ import DetailsSubmission from 'ui-component/custom-components/DetailsSubmission'
 import { Stack } from '@mui/system';
 import InterviewMain from 'ui-component/custom-components/InterviewMain';
 import CustomLoader from 'ui-component/custom-components/CustomLoader';
+import { useDispatch, useSelector } from 'react-redux';
+import { submitDetailsRequest } from 'store/reducers/interviewReducer';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const TakeAnInterview = () => {
   const [steps, setSteps] = useState([
@@ -35,12 +38,27 @@ const TakeAnInterview = () => {
     }
   ]);
   const [message, setMessage] = useState(null);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+  const { userDetails } = useSelector((state) => state.interview);
 
   const handleSubmitDetails = (formdata) => {
+    setLoading(true);
     //api for details submission
     console.log(formdata);
-    setMessage('Your details have been submitted successfully');
+    if (formdata) {
+      dispatch(submitDetailsRequest(formdata))
+        .then(unwrapResult)
+        .then(() => {
+          setMessage('Your details have been submitted successfully');
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -77,7 +95,7 @@ const TakeAnInterview = () => {
                     </Stack>
                   </Grid>
                 ) : null}
-                <DetailsSubmission isSubmitted={message ? true : false} handleSubmitDetails={handleSubmitDetails} />
+                <DetailsSubmission isSubmitted={message || userDetails ? true : false} handleSubmitDetails={handleSubmitDetails} />
               </>
             ) : getActiveIndex(steps) == 1 ? (
               <>
