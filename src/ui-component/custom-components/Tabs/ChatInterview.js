@@ -150,7 +150,7 @@ const ChatInterview = ({ questions = QS, handleBackStep }) => {
               fullWidth
               multiline
               rows={4}
-              value={formik.values.answers[activeStep]}
+              value={formik.values.answers[activeStep] ?? ''}
               onChange={formik.handleChange}
               error={formik.touched.answers && formik.errors.answers && formik.touched.answers[activeStep]}
               helperText={
@@ -168,7 +168,7 @@ const ChatInterview = ({ questions = QS, handleBackStep }) => {
                 variant="contained"
                 color="primary"
                 onClick={activeStep === questions.length - 1 ? handleOpen : handleNext}
-                disabled={formik.values.answers[activeStep] === '' || !interviewStarted}
+                disabled={!formik.values.answers[activeStep] || !interviewStarted}
               >
                 {activeStep === questions.length - 1 ? 'Finish' : 'Next'}
               </Button>
