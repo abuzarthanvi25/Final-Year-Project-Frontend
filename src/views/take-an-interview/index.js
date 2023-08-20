@@ -15,6 +15,7 @@ import CustomLoader from 'ui-component/custom-components/CustomLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { submitDetailsRequest } from 'store/reducers/interviewReducer';
 import { unwrapResult } from '@reduxjs/toolkit';
+import EvaluationMain from 'ui-component/custom-components/EvaluationMain';
 
 const TakeAnInterview = () => {
   const [steps, setSteps] = useState([
@@ -102,7 +103,9 @@ const TakeAnInterview = () => {
                 <InterviewMain handleBackStep={() => handleBack(steps, setSteps)} />
               </>
             ) : getActiveIndex(steps) == 2 ? (
-              <></>
+              <>
+                <EvaluationMain />
+              </>
             ) : null}
           </>
         </>
