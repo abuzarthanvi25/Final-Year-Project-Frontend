@@ -40,7 +40,7 @@ CustomModal.propTypes = {
   subtitle: PropTypes.string.isRequired,
   onConfirm: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.req
+  disabled: PropTypes.bool
 };
 
 export default CustomModal;
