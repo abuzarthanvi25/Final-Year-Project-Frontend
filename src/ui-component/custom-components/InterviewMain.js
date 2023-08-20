@@ -7,6 +7,7 @@ import { useState } from 'react';
 import TabPanel from './Tabs/TabPanel';
 import ChatInterview from './Tabs/ChatInterview';
 import VoiceToVoiceInterview from './Tabs/VoiceToVoiceInterview';
+import PropTypes from 'prop-types';
 
 function a11yProps(index) {
   return {
@@ -15,7 +16,7 @@ function a11yProps(index) {
   };
 }
 
-const InterviewMain = () => {
+const InterviewMain = ({ handleBackStep }) => {
   const [value, setValue] = useState(0);
 
   const handleChange = (_, newValue) => {
@@ -33,7 +34,7 @@ const InterviewMain = () => {
         </Grid>
         <Grid item lg={11} md={10} sm={12} xs={12}>
           <TabPanel value={value} index={0}>
-            <ChatInterview />
+            <ChatInterview handleBackStep={handleBackStep} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <VoiceToVoiceInterview />
@@ -42,6 +43,10 @@ const InterviewMain = () => {
       </Grid>
     </>
   );
+};
+
+InterviewMain.propTypes = {
+  handleBackStep: PropTypes.func
 };
 
 export default InterviewMain;

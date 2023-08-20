@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Container, TextField, Stepper, Step, StepLabel, Typography, Alert } from '@mui/material';
+import { useFormik } from 'formik';
 import PropTypes from 'prop-types';
+import CustomModal from '../CustomModal';
 
 const QS = [
   'What is your name?',
@@ -10,12 +12,50 @@ const QS = [
   'What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby?'
 ];
 
-const ChatInterview = ({ questions = QS }) => {
+const ChatInterview = ({ questions = QS, handleBackStep }) => {
   const [activeStep, setActiveStep] = useState(0);
-  const [answers, setAnswers] = useState(Array(questions.length).fill(''));
+  const [open, setOpen] = useState(false);
+  const [beginModalOpen, setBeginModalOpen] = useState(true);
+  const [interviewStarted, setInterviewStarted] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+  const [timer, setTimer] = useState(0);
+
+  const formik = useFormik({
+    initialValues: {
+      answers: Array(questions.length).fill('')
+    },
+    onSubmit: (values) => {
+      // Convert form data to an array of objects
+      const answersArray = values.answers.map((answer, index) => ({
+        question: questions[index],
+        answer
+      }));
+      console.log(answersArray);
+    }
+  });
+
+  useEffect(() => {
+    if (interviewStarted) {
+      const id = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+      }, 1000);
+      setIntervalId(id); // Store the interval ID in state
+      return () => {
+        clearInterval(id); // Clear the interval when the component unmounts or interviewStarted changes
+      };
+    }
+  }, [interviewStarted]);
+
+  const formatTime = (timeInSeconds) => {
+    const hours = Math.floor(timeInSeconds / 3600);
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
+    const seconds = timeInSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   const handleNext = () => {
-    if (answers[activeStep] !== '') {
+    if (formik.values.answers[activeStep] !== '') {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
@@ -24,14 +64,42 @@ const ChatInterview = ({ questions = QS }) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleChangeAnswer = (event) => {
-    const newAnswers = [...answers];
-    newAnswers[activeStep] = event.target.value;
-    setAnswers(newAnswers);
+  const handleOpen = () => {
+    setOpen(true);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleConfirm = () => {
+    clearInterval(intervalId);
+    formik.handleSubmit();
+    handleNext();
+    handleClose();
+  };
+
+  const handleBeginInterview = () => {
+    setBeginModalOpen(false);
+    setInterviewStarted(true);
+  };
   return (
     <Container>
+      <CustomModal
+        open={beginModalOpen}
+        handleClose={handleBackStep}
+        message="Begin Interview?"
+        subtitle=""
+        disableBackdropClick
+        onConfirm={handleBeginInterview}
+      />
+      <CustomModal
+        open={open}
+        handleClose={handleClose}
+        message="Are you sure you want to submit your answers?"
+        subtitle="(No corrections/alterations to the answers can be made after this)"
+        onConfirm={handleConfirm}
+      />
       <Stepper sx={{ display: 'flex', flexWrap: 'wrap' }} activeStep={activeStep}>
         {questions.map((question, index) => (
           <Step sx={{ display: 'flex', flexWrap: 'wrap' }} key={index}>
@@ -45,6 +113,9 @@ const ChatInterview = ({ questions = QS }) => {
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
           <Alert sx={{ mt: 3 }} variant="filled" severity="success">
             <Typography variant="h5">Thank you for answering all questions!</Typography>
+            <Typography variant="caption" sx={{ mt: 2 }}>
+              Total Interview Time: {formatTime(timer)} {/* Calculate total elapsed time */}
+            </Typography>
           </Alert>
         </Box>
       ) : (
@@ -68,24 +139,40 @@ const ChatInterview = ({ questions = QS }) => {
               Q {activeStep + 1} : {questions[activeStep]}
             </Typography>
           </Box>
-          <TextField
-            label="Answer"
-            variant="outlined"
-            fullWidth
-            multiline
-            rows={4}
-            value={answers[activeStep]}
-            onChange={handleChangeAnswer}
-            sx={{ marginY: 2 }}
-          />
-          <Box>
-            <Button disabled={activeStep === 0} onClick={handleBack} sx={{ marginRight: 2 }}>
-              Back
-            </Button>
-            <Button variant="contained" color="primary" onClick={handleNext} disabled={answers[activeStep] === ''}>
-              {activeStep === questions.length - 1 ? 'Finish' : 'Next'}
-            </Button>
-          </Box>
+          <form onSubmit={formik.handleSubmit}>
+            <TextField
+              label="Answer"
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={4}
+              value={formik.values.answers[activeStep]}
+              onChange={formik.handleChange}
+              error={formik.touched.answers && formik.errors.answers && formik.touched.answers[activeStep]}
+              helperText={
+                formik.touched.answers && formik.errors.answers && formik.touched.answers[activeStep] && formik.errors.answers[activeStep]
+              }
+              sx={{ marginY: 2 }}
+              name={`answers[${activeStep}]`}
+              disabled={!interviewStarted}
+            />
+            <Box>
+              <Button disabled={activeStep === 0} onClick={handleBack} sx={{ marginRight: 2 }}>
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={activeStep === questions.length - 1 ? handleOpen : handleNext}
+                disabled={formik.values.answers[activeStep] === '' || !interviewStarted}
+              >
+                {activeStep === questions.length - 1 ? 'Finish' : 'Next'}
+              </Button>
+            </Box>
+          </form>
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Interview Started: {formatTime(timer)} {/* Update this line */}
+          </Typography>
         </Box>
       )}
     </Container>
@@ -93,7 +180,8 @@ const ChatInterview = ({ questions = QS }) => {
 };
 
 ChatInterview.propTypes = {
-  questions: PropTypes.array
+  questions: PropTypes.array,
+  handleBackStep: PropTypes.func
 };
 
 export default ChatInterview;

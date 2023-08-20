@@ -81,7 +81,7 @@ const TakeAnInterview = () => {
               </>
             ) : getActiveIndex(steps) == 1 ? (
               <>
-                <InterviewMain />
+                <InterviewMain handleBackStep={() => handleBack(steps, setSteps)} />
               </>
             ) : getActiveIndex(steps) == 2 ? (
               <></>
