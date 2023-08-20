@@ -40,9 +40,10 @@ const TakeAnInterview = () => {
   ]);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [disabledNext, setDisabledNext] = useState(false);
 
   const dispatch = useDispatch();
-  const { userDetails } = useSelector((state) => state.interview);
+  const { userDetails, evaluationDetails } = useSelector((state) => state.interview);
 
   const handleSubmitDetails = (formdata) => {
     setLoading(true);
@@ -59,8 +60,13 @@ const TakeAnInterview = () => {
           setLoading(false);
           console.log(error);
         });
+      console.log(disabledNext);
     }
   };
+
+  const handleDisable = () => setDisabledNext(true);
+  const handleEnable = () => setDisabledNext(false);
+  const handleLoading = (bool) => setLoading(bool);
 
   return (
     <MainCard title="Take An Interview">
@@ -80,7 +86,13 @@ const TakeAnInterview = () => {
               Back
             </Button>
             <Stepper steps={steps} />
-            <Button endIcon={<ArrowForwardIcon />} color="primary" variant="contained" onClick={() => handleNext(steps, setSteps)}>
+            <Button
+              disabled={disabledNext}
+              endIcon={<ArrowForwardIcon />}
+              color="primary"
+              variant="contained"
+              onClick={() => handleNext(steps, setSteps)}
+            >
               {getActiveIndex(steps) === steps.length - 1 ? 'Finish' : 'Next'}
             </Button>
           </Box>
@@ -100,11 +112,21 @@ const TakeAnInterview = () => {
               </>
             ) : getActiveIndex(steps) == 1 ? (
               <>
-                <InterviewMain handleBackStep={() => handleBack(steps, setSteps)} />
+                <InterviewMain
+                  handleDisable={handleDisable}
+                  handleEnable={handleEnable}
+                  handleLoading={handleLoading}
+                  loading={loading}
+                  handleBackStep={() => handleBack(steps, setSteps)}
+                />
               </>
             ) : getActiveIndex(steps) == 2 ? (
               <>
-                <EvaluationMain />
+                <EvaluationMain
+                  intervieweeName={userDetails?.name}
+                  evaluation={evaluationDetails?.evaluation_message}
+                  evalutionPoints={evaluationDetails?.evaluation}
+                />
               </>
             ) : null}
           </>

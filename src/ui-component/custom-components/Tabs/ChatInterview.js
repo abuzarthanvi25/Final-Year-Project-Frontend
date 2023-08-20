@@ -3,7 +3,9 @@ import { Box, Button, Container, TextField, Stepper, Step, StepLabel, Typography
 import { useFormik } from 'formik';
 import PropTypes from 'prop-types';
 import CustomModal from '../CustomModal';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { evaluateAnswersRequest } from 'store/reducers/interviewReducer';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const QS = [
   'What is your name?',
@@ -13,7 +15,7 @@ const QS = [
   'What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby What is your hobby?'
 ];
 
-const ChatInterview = ({ questions = QS, handleBackStep }) => {
+const ChatInterview = ({ questions = QS, handleBackStep, handleEnable, handleDisable, handleLoading }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [open, setOpen] = useState(false);
   const [beginModalOpen, setBeginModalOpen] = useState(true);
@@ -22,6 +24,8 @@ const ChatInterview = ({ questions = QS, handleBackStep }) => {
   const [timer, setTimer] = useState(0);
 
   const { userDetails } = useSelector((state) => state.interview);
+
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -34,6 +38,7 @@ const ChatInterview = ({ questions = QS, handleBackStep }) => {
         answer
       }));
       console.log(answersArray);
+      handleEvaluateAnswers(answersArray);
     }
   });
 
@@ -46,6 +51,8 @@ const ChatInterview = ({ questions = QS, handleBackStep }) => {
       return () => {
         clearInterval(id); // Clear the interval when the component unmounts or interviewStarted changes
       };
+    } else {
+      handleEnable();
     }
   }, [interviewStarted]);
 
@@ -79,10 +86,25 @@ const ChatInterview = ({ questions = QS, handleBackStep }) => {
     clearInterval(intervalId);
     formik.handleSubmit();
     handleNext();
+    setInterviewStarted(false);
     handleClose();
   };
 
+  const handleEvaluateAnswers = (payload) => {
+    handleLoading(true);
+    dispatch(evaluateAnswersRequest(payload))
+      .then(unwrapResult)
+      .then(() => {
+        handleLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        handleLoading(false);
+      });
+  };
+
   const handleBeginInterview = () => {
+    handleDisable();
     setBeginModalOpen(false);
     setInterviewStarted(true);
   };
@@ -185,7 +207,10 @@ const ChatInterview = ({ questions = QS, handleBackStep }) => {
 
 ChatInterview.propTypes = {
   questions: PropTypes.array,
-  handleBackStep: PropTypes.func
+  handleBackStep: PropTypes.func,
+  handleEnable: PropTypes.func,
+  handleDisable: PropTypes.func,
+  handleLoading: PropTypes.func
 };
 
 export default ChatInterview;

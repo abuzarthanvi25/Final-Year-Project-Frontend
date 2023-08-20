@@ -1,6 +1,7 @@
 const APICONSTANTS = {
   getInterviewQuestions: '/submit-details',
-  resetState: '/reset'
+  resetState: '/reset',
+  evaluateAnswers: '/evaluate-answers'
 };
 
 export default APICONSTANTS;

@@ -18,7 +18,7 @@ function a11yProps(index) {
   };
 }
 
-const InterviewMain = ({ handleBackStep }) => {
+const InterviewMain = ({ handleBackStep, handleDisable, handleEnable, handleLoading }) => {
   const [value, setValue] = useState(0);
   const [questions, setQuestions] = useState([]);
 
@@ -45,7 +45,13 @@ const InterviewMain = ({ handleBackStep }) => {
         </Grid>
         <Grid item lg={11} md={10} sm={12} xs={12}>
           <TabPanel value={value} index={0}>
-            <ChatInterview questions={questions} handleBackStep={handleBackStep} />
+            <ChatInterview
+              handleEnable={handleEnable}
+              handleDisable={handleDisable}
+              questions={questions}
+              handleBackStep={handleBackStep}
+              handleLoading={handleLoading}
+            />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <VoiceToVoiceInterview />
@@ -57,7 +63,10 @@ const InterviewMain = ({ handleBackStep }) => {
 };
 
 InterviewMain.propTypes = {
-  handleBackStep: PropTypes.func
+  handleBackStep: PropTypes.func,
+  handleDisable: PropTypes.func,
+  handleEnable: PropTypes.func,
+  handleLoading: PropTypes.func
 };
 
 export default InterviewMain;

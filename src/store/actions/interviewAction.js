@@ -19,7 +19,17 @@ async function resetState(payload, thunkAPI) {
   }
 }
 
+async function evaluateAnswers(payload, thunkAPI) {
+  try {
+    const response = await ApiResource.post(ApiConstants.evaluateAnswers, payload);
+    return response;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
+}
+
 export const InterviewApiServices = {
   submitDetails,
-  resetState
+  resetState,
+  evaluateAnswers
 };

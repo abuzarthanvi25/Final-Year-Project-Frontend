@@ -10,7 +10,8 @@ let initialState = {
   error: null,
   loading: loadingStates.idle,
   allQuestions: [],
-  userDetails: null
+  userDetails: null,
+  evaluationDetails: null
 };
 
 export const submitDetailsRequest = createAsyncThunk('InterviewReducer/submitDetailsRequest', async (payload, thunkApi) => {
@@ -20,6 +21,11 @@ export const submitDetailsRequest = createAsyncThunk('InterviewReducer/submitDet
 
 export const resetStateRequest = createAsyncThunk('InterviewReducer/resetStateRequest', async (payload, thunkApi) => {
   const response = await InterviewApiServices.resetState(payload, thunkApi);
+  return response;
+});
+
+export const evaluateAnswersRequest = createAsyncThunk('InterviewReducer/evaluateAnswersRequest', async (payload, thunkApi) => {
+  const response = await InterviewApiServices.evaluateAnswers(payload, thunkApi);
   return response;
 });
 
@@ -43,6 +49,30 @@ const InterviewReducer = createReducer(initialState, {
   },
 
   [submitDetailsRequest.rejected]: (state, action) => {
+    return {
+      ...state,
+      error: action.payload?.response?.data,
+      loading: loadingStates.idle
+    };
+  },
+  [evaluateAnswersRequest.pending]: (state) => {
+    return {
+      ...state,
+      error: null,
+      loading: loadingStates.pending
+    };
+  },
+
+  [evaluateAnswersRequest.fulfilled]: (state, action) => {
+    return {
+      ...state,
+      error: null,
+      loading: loadingStates.idle,
+      evaluationDetails: action.payload.data
+    };
+  },
+
+  [evaluateAnswersRequest.rejected]: (state, action) => {
     return {
       ...state,
       error: action.payload?.response?.data,
