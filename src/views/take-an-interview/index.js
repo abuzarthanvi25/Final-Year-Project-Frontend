@@ -7,17 +7,20 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AutoModeIcon from '@mui/icons-material/AutoMode';
 import InterpreterModeIcon from '@mui/icons-material/InterpreterMode';
 import { Alert, Box, Button, Grid } from '@mui/material';
-import { getActiveIndex, handleBack, handleNext } from 'utils/helpers';
+import { getActiveIndex, handleBack, handleNext, handleFinish, handleStart } from 'utils/helpers';
 import DetailsSubmission from 'ui-component/custom-components/DetailsSubmission';
 import { Stack } from '@mui/system';
 import InterviewMain from 'ui-component/custom-components/InterviewMain';
 import CustomLoader from 'ui-component/custom-components/CustomLoader';
 import { useDispatch, useSelector } from 'react-redux';
-import { submitDetailsRequest } from 'store/reducers/interviewReducer';
+import { submitDetailsRequest, resetStateRequest } from 'store/reducers/interviewReducer';
 import { unwrapResult } from '@reduxjs/toolkit';
 import EvaluationMain from 'ui-component/custom-components/EvaluationMain';
 
 const TakeAnInterview = () => {
+  const dispatch = useDispatch();
+  const { userDetails, evaluationDetails } = useSelector((state) => state.interview);
+
   const [steps, setSteps] = useState([
     {
       title: 'Details Submission',
@@ -42,8 +45,6 @@ const TakeAnInterview = () => {
   const [loading, setLoading] = useState(false);
   const [disabledNext, setDisabledNext] = useState(false);
 
-  const dispatch = useDispatch();
-  const { userDetails, evaluationDetails } = useSelector((state) => state.interview);
 
   const handleSubmitDetails = (formdata) => {
     setLoading(true);
@@ -68,6 +69,11 @@ const TakeAnInterview = () => {
   const handleEnable = () => setDisabledNext(false);
   const handleLoading = (bool) => setLoading(bool);
 
+  const handleRetakeInterview = () => { 
+    handleStart(steps, setSteps, evaluationDetails)
+    dispatch(resetStateRequest())
+   };
+
   return (
     <MainCard title="Take An Interview">
       {loading ? (
@@ -87,11 +93,11 @@ const TakeAnInterview = () => {
             </Button>
             <Stepper steps={steps} />
             <Button
-              disabled={disabledNext}
+              disabled={disabledNext || steps[steps.length - 1].completed}
               endIcon={<ArrowForwardIcon />}
               color="primary"
               variant="contained"
-              onClick={() => handleNext(steps, setSteps)}
+              onClick={() => getActiveIndex(steps) === steps.length - 1 ? handleFinish(steps, setSteps, evaluationDetails) : handleNext(steps, setSteps)}
             >
               {getActiveIndex(steps) === steps.length - 1 ? 'Finish' : 'Next'}
             </Button>
@@ -118,6 +124,7 @@ const TakeAnInterview = () => {
                   handleLoading={handleLoading}
                   loading={loading}
                   handleBackStep={() => handleBack(steps, setSteps)}
+                  handleNextStep={() => handleNext(steps, setSteps)}
                 />
               </>
             ) : getActiveIndex(steps) == 2 ? (
@@ -127,6 +134,12 @@ const TakeAnInterview = () => {
                   evaluation={evaluationDetails?.evaluation_message}
                   evalutionPoints={evaluationDetails?.evaluation}
                 />
+                {
+                  evaluationDetails ?
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <Button onClick={handleRetakeInterview} variant='contained'>Retake Interview</Button>
+                    </Box> : null
+                }
               </>
             ) : null}
           </>

@@ -18,7 +18,7 @@ function a11yProps(index) {
   };
 }
 
-const InterviewMain = ({ handleBackStep, handleDisable, handleEnable, handleLoading }) => {
+const InterviewMain = ({ handleBackStep, handleDisable, handleEnable, handleLoading, handleNextStep }) => {
   const [value, setValue] = useState(0);
   const [questions, setQuestions] = useState([]);
 
@@ -51,6 +51,7 @@ const InterviewMain = ({ handleBackStep, handleDisable, handleEnable, handleLoad
               questions={questions}
               handleBackStep={handleBackStep}
               handleLoading={handleLoading}
+              handleNextStep={handleNextStep}
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
@@ -66,7 +67,8 @@ InterviewMain.propTypes = {
   handleBackStep: PropTypes.func,
   handleDisable: PropTypes.func,
   handleEnable: PropTypes.func,
-  handleLoading: PropTypes.func
+  handleLoading: PropTypes.func,
+  handleNextStep: PropTypes.func
 };
 
 export default InterviewMain;
