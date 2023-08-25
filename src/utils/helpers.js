@@ -31,6 +31,27 @@ export function handleNext(steps, setActiveStep) {
   }
 }
 
+export function handleFinish(steps, setActiveStep, state) {
+  let copySteps = [...steps];
+  if(state){
+    for(let i=0; i < copySteps.length; i++){
+      copySteps[i].completed = true; 
+    }
+    setActiveStep(copySteps)
+  }
+}
+
+export function handleStart(steps, setActiveStep, state) {
+  let copySteps = [...steps];
+  if(!state){
+    for(let i=0; i < copySteps.length; i++){
+      copySteps[0].active = true; 
+      copySteps[i].completed = false; 
+    }
+    setActiveStep(copySteps)
+  }
+}
+
 export function handleBack(steps, setActiveStep) {
   let copySteps = [...steps];
   const activeIndex = getActiveIndex(steps);

@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 // project imports
 import * as serviceWorker from 'serviceWorker';
 import App from 'App';
-import { store } from 'store';
+import configureStores from 'store/index';
 
 // style + assets
 import 'assets/scss/style.scss';
@@ -17,6 +17,7 @@ import config from './config';
 import { AuthProvider } from './utils/authentication/authProvider';
 
 // ==============================|| REACT DOM RENDER  ||============================== //
+const { store } = configureStores();
 
 const container = document.getElementById('root');
 const root = createRoot(container); // createRoot(container!) if you use TypeScript

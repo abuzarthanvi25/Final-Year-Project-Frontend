@@ -2,11 +2,13 @@ import { combineReducers } from 'redux';
 
 // reducer import
 import customizationReducer from './customizationReducer';
+import InterviewReducer from './reducers/interviewReducer';
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
-const reducer = combineReducers({
-  customization: customizationReducer
+const rootReducer = combineReducers({
+  customization: customizationReducer,
+  interview: InterviewReducer
 });
 
-export default reducer;
+export default rootReducer;

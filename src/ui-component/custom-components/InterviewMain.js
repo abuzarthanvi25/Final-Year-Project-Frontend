@@ -8,6 +8,8 @@ import TabPanel from './Tabs/TabPanel';
 import ChatInterview from './Tabs/ChatInterview';
 import VoiceToVoiceInterview from './Tabs/VoiceToVoiceInterview';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 function a11yProps(index) {
   return {
@@ -16,8 +18,17 @@ function a11yProps(index) {
   };
 }
 
-const InterviewMain = ({ handleBackStep }) => {
+const InterviewMain = ({ handleBackStep, handleDisable, handleEnable, handleLoading, handleNextStep }) => {
   const [value, setValue] = useState(0);
+  const [questions, setQuestions] = useState([]);
+
+  const { allQuestions } = useSelector((state) => state.interview);
+
+  useEffect(() => {
+    if (allQuestions) {
+      setQuestions(allQuestions);
+    }
+  }, [allQuestions]);
 
   const handleChange = (_, newValue) => {
     setValue(newValue);
@@ -34,7 +45,14 @@ const InterviewMain = ({ handleBackStep }) => {
         </Grid>
         <Grid item lg={11} md={10} sm={12} xs={12}>
           <TabPanel value={value} index={0}>
-            <ChatInterview handleBackStep={handleBackStep} />
+            <ChatInterview
+              handleEnable={handleEnable}
+              handleDisable={handleDisable}
+              questions={questions}
+              handleBackStep={handleBackStep}
+              handleLoading={handleLoading}
+              handleNextStep={handleNextStep}
+            />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <VoiceToVoiceInterview />
@@ -46,7 +64,11 @@ const InterviewMain = ({ handleBackStep }) => {
 };
 
 InterviewMain.propTypes = {
-  handleBackStep: PropTypes.func
+  handleBackStep: PropTypes.func,
+  handleDisable: PropTypes.func,
+  handleEnable: PropTypes.func,
+  handleLoading: PropTypes.func,
+  handleNextStep: PropTypes.func
 };
 
 export default InterviewMain;

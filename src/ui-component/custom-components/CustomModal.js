@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Typography } from '@mui/material';
 
-const CustomModal = ({ open, message, onConfirm, handleClose, subtitle }) => {
+const CustomModal = ({ open, message, onConfirm, handleClose, subtitle, disabled = false }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>
@@ -26,7 +26,7 @@ const CustomModal = ({ open, message, onConfirm, handleClose, subtitle }) => {
         <Button variant="contained" onClick={handleClose} color="error">
           Cancel
         </Button>
-        <Button variant="contained" onClick={onConfirm} color="success">
+        <Button disabled={disabled} variant="contained" onClick={onConfirm} color="success">
           Confirm
         </Button>
       </DialogActions>
@@ -39,7 +39,8 @@ CustomModal.propTypes = {
   message: PropTypes.string.isRequired,
   subtitle: PropTypes.string.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  handleClose: PropTypes.func.isRequired
+  handleClose: PropTypes.func.isRequired,
+  disabled: PropTypes.bool
 };
 
 export default CustomModal;

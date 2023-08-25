@@ -11,8 +11,10 @@
     "@mui/material": "^5.8.6",
     "@mui/system": "^5.8.6",
     "@mui/utils": "^5.8.6",
+    "@reduxjs/toolkit": "^1.9.5",
     "@tabler/icons": "^1.72.0",
     "apexcharts": "^3.35.3",
+    "axios": "^1.4.0",
     "firebase": "^10.2.0",
     "formik": "^2.2.9",
     "framer-motion": "^6.5.1",
@@ -28,6 +30,9 @@
     "react-router-dom": "6.3.0",
     "react-scripts": "^5.0.1",
     "redux": "^4.2.0",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.4.2",
     "yup": "^0.32.11"
   },
   "scripts": {
