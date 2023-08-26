@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 export default axios.create({
-  baseURL: 'http://127.0.0.1:5000/api',
+  baseURL: 'http://127.0.0.1:5000/api', // for azure production env
+  // baseURL: '172.178.100.24:5000/api', // for local running purposes
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
