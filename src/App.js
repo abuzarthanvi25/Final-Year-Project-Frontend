@@ -17,6 +17,7 @@ import { firebaseConfig } from 'utils/authentication/firebase';
 import { useAuth } from 'utils/authentication/authProvider';
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
+import { useState } from 'react';
 
 initializeApp(firebaseConfig);
 
@@ -32,6 +33,31 @@ const App = () => {
       navigate('/pages/login');
     }
   }, [currentUser]);
+
+  const [tabChanges, setTabChanges] = useState(0);
+
+  useEffect(() => {
+    // Listen for visibility change events
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Page is hidden (tab is not active)
+        setTabChanges((prevTabChanges) => prevTabChanges + 1);
+        if (tabChanges > 1) {
+          console.log('A');
+        }
+        alert("Please don't switch tabs while the interview is in progress");
+      } else {
+        // Page is visible (tab is active)
+        setTabChanges(0); // Reset the tab changes counter
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [tabChanges]);
 
   return (
     <StyledEngineProvider injectFirst>

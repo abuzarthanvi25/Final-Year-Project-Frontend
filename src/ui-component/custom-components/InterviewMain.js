@@ -37,8 +37,8 @@ const InterviewMain = ({ handleBackStep, handleDisable, handleEnable, handleLoad
   return (
     <>
       <Grid sx={{ my: 5, p: 0 }} container>
-        <Grid item lg={1} md={2} sm={12} xs={12}>
-          <Tabs centered orientation="vertical" value={value} onChange={handleChange} aria-label="icon label tabs example">
+        <Grid item lg={12} md={2} sm={12} xs={12}>
+          <Tabs centered orientation="horizontal" value={value} onChange={handleChange} aria-label="icon label tabs example">
             <Tab icon={<VoiceChatIcon />} label="Chat Interview" {...a11yProps(0)} />
             <Tab icon={<PsychologyIcon />} label="Simulated Interview" {...a11yProps(1)} />
           </Tabs>
@@ -55,7 +55,14 @@ const InterviewMain = ({ handleBackStep, handleDisable, handleEnable, handleLoad
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <VoiceToVoiceInterview />
+            <VoiceToVoiceInterview
+              handleEnable={handleEnable}
+              handleDisable={handleDisable}
+              questions={questions}
+              handleBackStep={handleBackStep}
+              handleLoading={handleLoading}
+              handleNextStep={handleNextStep}
+            />
           </TabPanel>
         </Grid>
       </Grid>

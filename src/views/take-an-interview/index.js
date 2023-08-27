@@ -45,7 +45,6 @@ const TakeAnInterview = () => {
   const [loading, setLoading] = useState(false);
   const [disabledNext, setDisabledNext] = useState(false);
 
-
   const handleSubmitDetails = (formdata) => {
     setLoading(true);
     //api for details submission
@@ -69,10 +68,10 @@ const TakeAnInterview = () => {
   const handleEnable = () => setDisabledNext(false);
   const handleLoading = (bool) => setLoading(bool);
 
-  const handleRetakeInterview = () => { 
-    handleStart(steps, setSteps, evaluationDetails)
-    dispatch(resetStateRequest())
-   };
+  const handleRetakeInterview = () => {
+    handleStart(steps, setSteps, evaluationDetails);
+    dispatch(resetStateRequest());
+  };
 
   return (
     <MainCard title="Take An Interview">
@@ -97,7 +96,9 @@ const TakeAnInterview = () => {
               endIcon={<ArrowForwardIcon />}
               color="primary"
               variant="contained"
-              onClick={() => getActiveIndex(steps) === steps.length - 1 ? handleFinish(steps, setSteps, evaluationDetails) : handleNext(steps, setSteps)}
+              onClick={() =>
+                getActiveIndex(steps) === steps.length - 1 ? handleFinish(steps, setSteps, evaluationDetails) : handleNext(steps, setSteps)
+              }
             >
               {getActiveIndex(steps) === steps.length - 1 ? 'Finish' : 'Next'}
             </Button>
@@ -134,12 +135,13 @@ const TakeAnInterview = () => {
                   evaluation={evaluationDetails?.evaluation_message}
                   evalutionPoints={evaluationDetails?.evaluation}
                 />
-                {
-                  evaluationDetails ?
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <Button onClick={handleRetakeInterview} variant='contained'>Retake Interview</Button>
-                    </Box> : null
-                }
+                {evaluationDetails ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <Button onClick={handleRetakeInterview} variant="contained">
+                      Retake Interview
+                    </Button>
+                  </Box>
+                ) : null}
               </>
             ) : null}
           </>
