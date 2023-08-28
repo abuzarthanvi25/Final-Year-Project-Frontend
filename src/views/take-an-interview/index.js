@@ -1,6 +1,6 @@
 import Stepper from 'ui-component/custom-components/Stepper';
 import MainCard from 'ui-component/cards/MainCard';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import FeedIcon from '@mui/icons-material/Feed';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -18,6 +18,23 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import EvaluationMain from 'ui-component/custom-components/EvaluationMain';
 
 const TakeAnInterview = () => {
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log('User switched to another tab or window');
+        // You can perform actions here when the user switches to another tab
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+
   const dispatch = useDispatch();
   const { userDetails, evaluationDetails } = useSelector((state) => state.interview);
 
