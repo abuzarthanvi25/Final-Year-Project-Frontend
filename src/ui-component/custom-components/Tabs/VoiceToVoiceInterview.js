@@ -5,11 +5,13 @@ import VideoTile from 'ui-component/custom-components/VideoTile';
 import { styled } from '@mui/material/styles';
 import Speech from 'speak-tts';
 import { useState } from 'react';
-import { evaluateAnswersRequest } from 'store/reducers/interviewReducer';
+import { evaluateAnswersRequest, resetStateRequest } from 'store/reducers/interviewReducer';
 import CustomModal from 'ui-component/custom-components/CustomModal';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { useAuth } from 'utils/authentication/authProvider';
+import { useNavigate } from 'react-router';
 
 const QS = ['What is your name?', 'Where are you from?', 'What is your favorite color?', 'What is your hobby?'];
 
@@ -36,6 +38,41 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable, 
   const [streamedText, setStreamedText] = useState('');
   const [beginModalOpen, setBeginModalOpen] = useState(true);
   const [speaking, setSpeaking] = useState(false);
+  const [tabChanges, setTabChanges] = useState(0);
+
+  const { signOutUser } = useAuth();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOutUser();
+    dispatch(resetStateRequest());
+    navigate('/pages/login');
+  };
+
+  useEffect(() => {
+    // Listen for visibility change events
+    if (interviewStarted) {
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          // Page is hidden (tab is not active)
+          setTabChanges((prevTabChanges) => prevTabChanges + 1);
+          if (tabChanges > 3) {
+            alert('You are disqualified from the interview due to changing tabs more than 3 times');
+            setTimeout(() => handleLogout(), 2000);
+          } else {
+            alert("Please don't switch tabs while the interview is in progress");
+          }
+        }
+      };
+
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+      };
+    }
+  }, [tabChanges, interviewStarted]);
 
   useEffect(() => {
     if (questions.length > 0) {
@@ -87,8 +124,6 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable, 
     setBeginModalOpen(false);
     setInterviewStarted(true);
   };
-
-  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
