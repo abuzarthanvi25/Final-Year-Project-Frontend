@@ -5,14 +5,15 @@ import VideoTile from 'ui-component/custom-components/VideoTile';
 import { styled } from '@mui/material/styles';
 import Speech from 'speak-tts';
 import { useState } from 'react';
-// import { evaluateAnswersRequest } from 'store/reducers/interviewReducer';
+import { evaluateAnswersRequest } from 'store/reducers/interviewReducer';
 import CustomModal from 'ui-component/custom-components/CustomModal';
-// import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const QS = ['What is your name?', 'Where are you from?', 'What is your favorite color?', 'What is your hobby?'];
 
-const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable }) => {
+const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable, handleNextStep, handleLoading }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [open, setOpen] = useState(false);
   const [interviewStarted, setInterviewStarted] = useState(false);
@@ -34,6 +35,7 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable }
   const [speakText, setSpeakText] = useState('');
   const [streamedText, setStreamedText] = useState('');
   const [beginModalOpen, setBeginModalOpen] = useState(true);
+  const [speaking, setSpeaking] = useState(false);
 
   useEffect(() => {
     if (questions.length > 0) {
@@ -61,24 +63,24 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable }
 
   const handleConfirm = () => {
     formik.handleSubmit();
-    // handleNext();
-    // setInterviewStarted(false);
-    // handleClose();
+    handleNext();
+    setInterviewStarted(false);
+    handleClose();
   };
 
-  // const handleEvaluateAnswers = (payload) => {
-  //   handleLoading(true);
-  //   dispatch(evaluateAnswersRequest(payload))
-  //     .then(unwrapResult)
-  //     .then(() => {
-  //       handleLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       handleLoading(false);
-  //       handleNextStep();
-  //     });
-  // };
+  const handleEvaluateAnswers = (payload) => {
+    handleLoading(true);
+    dispatch(evaluateAnswersRequest(payload))
+      .then(unwrapResult)
+      .then(() => {
+        handleLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        handleLoading(false);
+        handleNextStep();
+      });
+  };
 
   const handleBeginInterview = () => {
     handleDisable();
@@ -86,7 +88,7 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable }
     setInterviewStarted(true);
   };
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -99,7 +101,7 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable }
         answer
       }));
       console.log(answersArray);
-      // handleEvaluateAnswers(answersArray);
+      handleEvaluateAnswers(answersArray);
     }
   });
 
@@ -129,6 +131,7 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable }
   };
 
   const startStreaming = () => {
+    setSpeaking(true);
     setIsIntervieweeIsMuted(true);
     setisAIIsMuted(false);
     initializeSpeech();
@@ -144,6 +147,7 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable }
           },
           onend: () => {
             // setisAIIsMuted(true);
+            setSpeaking(false);
             console.log('End utterance');
           },
           onresume: () => {
@@ -152,9 +156,11 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable }
         }
       })
       .then(() => {
+        setSpeaking(false);
         console.log('Success !');
       })
       .catch((e) => {
+        setSpeaking(false);
         console.error('An error occurred :', e);
       });
   };
@@ -275,6 +281,7 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable }
               avatarUrl={aiPresenter.avatarUrl}
               isCameraOn={isCameraOn}
               isMuted={isAIMuted}
+              disabled={speaking}
             />
           </Grid>
           <Grid item xs={12} md={6} lg={4}>

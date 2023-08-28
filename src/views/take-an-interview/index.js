@@ -69,8 +69,9 @@ const TakeAnInterview = () => {
   const handleLoading = (bool) => setLoading(bool);
 
   const handleRetakeInterview = () => {
-    handleStart(steps, setSteps, evaluationDetails);
-    dispatch(resetStateRequest());
+    dispatch(resetStateRequest()).then(() => {
+      handleStart(steps, setSteps, evaluationDetails);
+    });
   };
 
   return (
@@ -106,7 +107,7 @@ const TakeAnInterview = () => {
           <>
             {getActiveIndex(steps) == 0 ? (
               <>
-                {message ? (
+                {userDetails ? (
                   <Grid item xs={12} sx={{ m: 2 }} container alignItems="center" justifyContent="center">
                     <Stack sx={{ width: '100%' }}>
                       <Alert variant="filled" severity={'success'}>
@@ -115,7 +116,7 @@ const TakeAnInterview = () => {
                     </Stack>
                   </Grid>
                 ) : null}
-                <DetailsSubmission isSubmitted={message || userDetails ? true : false} handleSubmitDetails={handleSubmitDetails} />
+                <DetailsSubmission isSubmitted={userDetails ? true : false} handleSubmitDetails={handleSubmitDetails} />
               </>
             ) : getActiveIndex(steps) == 1 ? (
               <>

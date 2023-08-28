@@ -44,8 +44,8 @@ export function handleFinish(steps, setActiveStep, state) {
 export function handleStart(steps, setActiveStep, state) {
   let copySteps = [...steps];
   if (!state) {
-    for (let i = 0; i < copySteps.length; i++) {
-      copySteps[0].active = true;
+    for (let i = 1; i < copySteps.length; i++) {
+      copySteps[i].active = false;
       copySteps[i].completed = false;
     }
     setActiveStep(copySteps);
