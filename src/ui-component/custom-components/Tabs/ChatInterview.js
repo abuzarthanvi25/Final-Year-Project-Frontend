@@ -71,7 +71,7 @@ const ChatInterview = ({ questions = QS, handleBackStep, handleEnable, handleDis
       // Convert form data to an array of objects
       const answersArray = values.answers.map((answer, index) => ({
         question: questions[index],
-        answer
+        user_answer: answer
       }));
       console.log(answersArray);
       handleEvaluateAnswers(answersArray);
