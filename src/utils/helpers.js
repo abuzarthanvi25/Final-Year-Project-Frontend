@@ -33,22 +33,22 @@ export function handleNext(steps, setActiveStep) {
 
 export function handleFinish(steps, setActiveStep, state) {
   let copySteps = [...steps];
-  if(state){
-    for(let i=0; i < copySteps.length; i++){
-      copySteps[i].completed = true; 
+  if (state) {
+    for (let i = 0; i < copySteps.length; i++) {
+      copySteps[i].completed = true;
     }
-    setActiveStep(copySteps)
+    setActiveStep(copySteps);
   }
 }
 
 export function handleStart(steps, setActiveStep, state) {
   let copySteps = [...steps];
-  if(!state){
-    for(let i=0; i < copySteps.length; i++){
-      copySteps[0].active = true; 
-      copySteps[i].completed = false; 
+  if (!state) {
+    for (let i = 1; i < copySteps.length; i++) {
+      copySteps[i].active = false;
+      copySteps[i].completed = false;
     }
-    setActiveStep(copySteps)
+    setActiveStep(copySteps);
   }
 }
 

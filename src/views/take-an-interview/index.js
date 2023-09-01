@@ -62,7 +62,6 @@ const TakeAnInterview = () => {
   const [loading, setLoading] = useState(false);
   const [disabledNext, setDisabledNext] = useState(false);
 
-
   const handleSubmitDetails = (formdata) => {
     setLoading(true);
     //api for details submission
@@ -86,10 +85,11 @@ const TakeAnInterview = () => {
   const handleEnable = () => setDisabledNext(false);
   const handleLoading = (bool) => setLoading(bool);
 
-  const handleRetakeInterview = () => { 
-    handleStart(steps, setSteps, evaluationDetails)
-    dispatch(resetStateRequest())
-   };
+  const handleRetakeInterview = () => {
+    dispatch(resetStateRequest()).then(() => {
+      handleStart(steps, setSteps, evaluationDetails);
+    });
+  };
 
   return (
     <MainCard title="Take An Interview">
@@ -114,7 +114,9 @@ const TakeAnInterview = () => {
               endIcon={<ArrowForwardIcon />}
               color="primary"
               variant="contained"
-              onClick={() => getActiveIndex(steps) === steps.length - 1 ? handleFinish(steps, setSteps, evaluationDetails) : handleNext(steps, setSteps)}
+              onClick={() =>
+                getActiveIndex(steps) === steps.length - 1 ? handleFinish(steps, setSteps, evaluationDetails) : handleNext(steps, setSteps)
+              }
             >
               {getActiveIndex(steps) === steps.length - 1 ? 'Finish' : 'Next'}
             </Button>
@@ -122,7 +124,7 @@ const TakeAnInterview = () => {
           <>
             {getActiveIndex(steps) == 0 ? (
               <>
-                {message ? (
+                {userDetails ? (
                   <Grid item xs={12} sx={{ m: 2 }} container alignItems="center" justifyContent="center">
                     <Stack sx={{ width: '100%' }}>
                       <Alert variant="filled" severity={'success'}>
@@ -131,7 +133,7 @@ const TakeAnInterview = () => {
                     </Stack>
                   </Grid>
                 ) : null}
-                <DetailsSubmission isSubmitted={message || userDetails ? true : false} handleSubmitDetails={handleSubmitDetails} />
+                <DetailsSubmission isSubmitted={userDetails ? true : false} handleSubmitDetails={handleSubmitDetails} />
               </>
             ) : getActiveIndex(steps) == 1 ? (
               <>
@@ -151,12 +153,13 @@ const TakeAnInterview = () => {
                   evaluation={evaluationDetails?.evaluation_message}
                   evalutionPoints={evaluationDetails?.evaluation}
                 />
-                {
-                  evaluationDetails ?
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <Button onClick={handleRetakeInterview} variant='contained'>Retake Interview</Button>
-                    </Box> : null
-                }
+                {evaluationDetails ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <Button onClick={handleRetakeInterview} variant="contained">
+                      Retake Interview
+                    </Button>
+                  </Box>
+                ) : null}
               </>
             ) : null}
           </>

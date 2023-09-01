@@ -53,6 +53,7 @@ const FirebaseLogin = ({ ...others }) => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const googleHandler = async () => {
     setError(null);
@@ -75,9 +76,12 @@ const FirebaseLogin = ({ ...others }) => {
   const handleSignIn = async ({ email, password }) => {
     setError(null);
     try {
+      setLoading(true);
       await signIn(email, password);
+      setLoading(false);
       navigate('/');
     } catch (error) {
+      setLoading(false);
       setError(error.message);
     }
   };
@@ -286,7 +290,7 @@ const FirebaseLogin = ({ ...others }) => {
                 <AnimateButton>
                   <Button
                     disableElevation
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loading}
                     fullWidth
                     size="large"
                     type="submit"

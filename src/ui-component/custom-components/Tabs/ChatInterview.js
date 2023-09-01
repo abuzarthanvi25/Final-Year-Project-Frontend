@@ -4,8 +4,10 @@ import { useFormik } from 'formik';
 import PropTypes from 'prop-types';
 import CustomModal from '../CustomModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { evaluateAnswersRequest } from 'store/reducers/interviewReducer';
+import { evaluateAnswersRequest, resetStateRequest } from 'store/reducers/interviewReducer';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { useAuth } from 'utils/authentication/authProvider';
+import { useNavigate } from 'react-router';
 
 const QS = [
   'What is your name?',
@@ -22,6 +24,40 @@ const ChatInterview = ({ questions = QS, handleBackStep, handleEnable, handleDis
   const [interviewStarted, setInterviewStarted] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [timer, setTimer] = useState(0);
+  const [tabChanges, setTabChanges] = useState(0);
+
+  const { signOutUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOutUser();
+    dispatch(resetStateRequest());
+    navigate('/pages/login');
+  };
+
+  useEffect(() => {
+    // Listen for visibility change events
+    if (interviewStarted) {
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          // Page is hidden (tab is not active)
+          setTabChanges((prevTabChanges) => prevTabChanges + 1);
+          if (tabChanges > 3) {
+            alert('You are disqualified from the interview due to changing tabs more than 3 times');
+            setTimeout(() => handleLogout(), 2000);
+          } else {
+            alert("Please don't switch tabs while the interview is in progress");
+          }
+        }
+      };
+
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+      };
+    }
+  }, [tabChanges, interviewStarted]);
 
   const { userDetails, evaluationDetails } = useSelector((state) => state.interview);
 
