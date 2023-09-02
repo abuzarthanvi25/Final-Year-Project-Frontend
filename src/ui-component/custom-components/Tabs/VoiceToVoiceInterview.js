@@ -7,7 +7,7 @@ import Speech from 'speak-tts';
 import { useState } from 'react';
 import { evaluateAnswersRequest, resetStateRequest } from 'store/reducers/interviewReducer';
 import CustomModal from 'ui-component/custom-components/CustomModal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useAuth } from 'utils/authentication/authProvider';
@@ -74,6 +74,8 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable, 
     }
   }, [tabChanges, interviewStarted]);
 
+  const { userDetails, evaluationDetails } = useSelector((state) => state.interview);
+
   useEffect(() => {
     if (questions.length > 0) {
       setSpeakText(questions[activeStep]);
@@ -133,7 +135,7 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable, 
       // Convert form data to an array of objects
       const answersArray = values.answers.map((answer, index) => ({
         question: questions[index],
-        answer
+        user_answer: answer
       }));
       console.log(answersArray);
       handleEvaluateAnswers(answersArray);
@@ -265,146 +267,150 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable, 
 
   return (
     <Container>
-      <CustomModal
-        open={beginModalOpen}
-        handleClose={handleBackStep}
-        message="Begin Interview?"
-        subtitle=""
-        disableBackdropClick
-        onConfirm={handleBeginInterview}
-      />
-      <CustomModal
-        open={open}
-        handleClose={handleClose}
-        message="Are you sure you want to submit your answers?"
-        subtitle="(No corrections/alterations to the answers can be made after this)"
-        onConfirm={handleConfirm}
-      />
-      <OuterContainer>
-        <Grid container spacing={3} justifyContent="center">
-          <Grid item xs={12} md={12} lg={12}>
-            <Stepper sx={{ display: 'flex', flexWrap: 'wrap' }} activeStep={activeStep}>
-              {questions
-                ? questions.map((question, index) => (
-                    <Step sx={{ display: 'flex', flexWrap: 'wrap', color: 'white' }} key={index}>
-                      <StepLabel sx={{ color: 'white' }}>
-                        <span style={{ fontSize: '19px', fontWeight: 'bold', color: 'white' }}>{`${
-                          questions.length > 5 ? 'Q' : 'Question'
-                        } ${index + 1}`}</span>
-                      </StepLabel>
-                    </Step>
-                  ))
-                : null}
-            </Stepper>
-            {activeStep === questions.length ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
-                <Alert sx={{ mt: 3 }} variant="filled" severity="success">
-                  <Typography variant="h5">Thank you for answering all questions!</Typography>
-                </Alert>
-              </Box>
-            ) : null}
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <VideoTile
-              type={{
-                type: 'AI',
-                speak: startStreaming
-              }}
-              handleCameraToggle={handleCameraToggle}
-              handleMicToggle={handleAIMicToggle}
-              name={aiPresenter.name}
-              avatarUrl={aiPresenter.avatarUrl}
-              isCameraOn={isCameraOn}
-              isMuted={isAIMuted}
-              disabled={speaking}
-            />
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <VideoTile
-              type={{
-                type: 'Interviewee',
-                speak: startListening
-              }}
-              handleCameraToggle={handleCameraToggle}
-              handleMicToggle={handleIntervieweeMicToggle}
-              name={interviewee.name}
-              avatarUrl={interviewee.avatarUrl}
-              isCameraOn={isCameraOn}
-              isMuted={isIntervieweeMuted}
-            />
-          </Grid>
-        </Grid>
-
-        {isIntervieweeMuted && !isAIMuted ? (
-          <Grid sx={{ margin: '20px 0px', width: '100%' }} container justifyContent="center">
-            <Grid
-              sx={{ width: '100%', textAlign: 'center', display: 'flex', flexWrap: 'wrap' }}
-              justifyContent="center"
-              item
-              xs={12}
-              md={6}
-              lg={8}
-            >
-              <Typography variant="body3" color={'white'} sx={{ fontSize: '22px', fontWeight: 600, margin: '4px 0', lineHeight: '25px' }}>
-                {streamedText}
-              </Typography>
-            </Grid>
-          </Grid>
-        ) : (
-          <Grid container>
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-              <form onSubmit={formik.handleSubmit}>
-                <TextField
-                  label="Answer"
-                  variant="outlined"
-                  fullWidth
-                  multiline
-                  rows={4}
-                  defaultValue={formik.values.answers[activeStep] ?? ''}
-                  onChange={(e) => (formik.values.answers[activeStep] = e.target.value)}
-                  error={formik.touched.answers && formik.errors.answers && formik.touched.answers[activeStep]}
-                  helperText={
-                    formik.touched.answers &&
-                    formik.errors.answers &&
-                    formik.touched.answers[activeStep] &&
-                    formik.errors.answers[activeStep]
-                  }
-                  sx={{ marginY: 2 }}
-                  name={`answers[${activeStep}]`}
-                  disabled={!interviewStarted}
-                />
-                <Box>
-                  <Button disabled={activeStep === 0} onClick={handleBack} sx={{ marginRight: 2 }}>
-                    Back
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={activeStep === questions.length - 1 ? handleOpen : handleNext}
-                    disabled={!formik.values.answers[activeStep] || !interviewStarted}
-                  >
-                    {activeStep === questions.length - 1 ? 'Finish' : 'Next Question'}
-                  </Button>
+      <div style={{ pointerEvents: evaluationDetails ? 'none' : 'all' }}>
+        <CustomModal
+          open={beginModalOpen && !evaluationDetails}
+          handleClose={handleBackStep}
+          message="Begin Interview?"
+          subtitle=""
+          disableBackdropClick
+          onConfirm={handleBeginInterview}
+          disabled={!userDetails}
+        />
+        <CustomModal
+          open={open}
+          handleClose={handleClose}
+          message="Are you sure you want to submit your answers?"
+          subtitle="(No corrections/alterations to the answers can be made after this)"
+          onConfirm={handleConfirm}
+        />
+        <OuterContainer>
+          <Grid container spacing={3} justifyContent="center">
+            <Grid item xs={12} md={12} lg={12}>
+              <Stepper sx={{ display: 'flex', flexWrap: 'wrap' }} activeStep={activeStep}>
+                {questions
+                  ? questions.map((question, index) => (
+                      <Step sx={{ display: 'flex', flexWrap: 'wrap', color: 'white' }} key={index}>
+                        <StepLabel sx={{ color: 'white' }}>
+                          <span style={{ fontSize: '19px', fontWeight: 'bold', color: 'white' }}>{`${
+                            questions.length > 5 ? 'Q' : 'Question'
+                          } ${index + 1}`}</span>
+                        </StepLabel>
+                      </Step>
+                    ))
+                  : null}
+              </Stepper>
+              {activeStep === questions.length || evaluationDetails ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
+                  <Alert sx={{ mt: 3 }} variant="filled" severity="success">
+                    <Typography variant="h5">Thank you for answering all questions!</Typography>
+                  </Alert>
                 </Box>
-              </form>
+              ) : null}
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <VideoTile
+                type={{
+                  type: 'AI',
+                  speak: startStreaming
+                }}
+                handleCameraToggle={handleCameraToggle}
+                handleMicToggle={handleAIMicToggle}
+                name={aiPresenter.name}
+                avatarUrl={aiPresenter.avatarUrl}
+                isCameraOn={isCameraOn}
+                isMuted={isAIMuted}
+                disabled={speaking || evaluationDetails ? true : false}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <VideoTile
+                type={{
+                  type: 'Interviewee',
+                  speak: startListening
+                }}
+                handleCameraToggle={handleCameraToggle}
+                handleMicToggle={handleIntervieweeMicToggle}
+                name={interviewee.name}
+                avatarUrl={interviewee.avatarUrl}
+                isCameraOn={isCameraOn}
+                isMuted={isIntervieweeMuted}
+                disabled={evaluationDetails ? true : false}
+              />
             </Grid>
           </Grid>
-        )}
-      </OuterContainer>
-      <Box>
-        <Button onClick={() => startStreaming()} variant="contained" color="primary">
-          Speak
-        </Button>
-        <Button onClick={handlePauseSpeech} variant="contained" color="primary">
-          Pause Speaking
-        </Button>
-        <Button onClick={handleResumeSpeech} variant="contained" color="primary">
-          Resume Speaking
-        </Button>
-        <Button onClick={handleStopSpeech} variant="contained" color="primary">
-          Stop Speaking
-        </Button>
-      </Box>
+
+          {isIntervieweeMuted && !isAIMuted ? (
+            <Grid sx={{ margin: '20px 0px', width: '100%' }} container justifyContent="center">
+              <Grid
+                sx={{ width: '100%', textAlign: 'center', display: 'flex', flexWrap: 'wrap' }}
+                justifyContent="center"
+                item
+                xs={12}
+                md={6}
+                lg={8}
+              >
+                <Typography variant="body3" color={'white'} sx={{ fontSize: '22px', fontWeight: 600, margin: '4px 0', lineHeight: '25px' }}>
+                  {streamedText}
+                </Typography>
+              </Grid>
+            </Grid>
+          ) : (
+            <Grid container>
+              <Grid item xs={12} sm={12} md={12} lg={12}>
+                <form onSubmit={formik.handleSubmit}>
+                  <TextField
+                    label="Answer"
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    defaultValue={formik.values.answers[activeStep] ?? ''}
+                    onChange={(e) => (formik.values.answers[activeStep] = e.target.value)}
+                    error={formik.touched.answers && formik.errors.answers && formik.touched.answers[activeStep]}
+                    helperText={
+                      formik.touched.answers &&
+                      formik.errors.answers &&
+                      formik.touched.answers[activeStep] &&
+                      formik.errors.answers[activeStep]
+                    }
+                    sx={{ marginY: 2 }}
+                    name={`answers[${activeStep}]`}
+                    disabled={!interviewStarted}
+                  />
+                  <Box>
+                    <Button disabled={activeStep === 0} onClick={handleBack} sx={{ marginRight: 2 }}>
+                      Back
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={activeStep === questions.length - 1 ? handleOpen : handleNext}
+                      disabled={!formik.values.answers[activeStep] || !interviewStarted}
+                    >
+                      {activeStep === questions.length - 1 ? 'Finish' : 'Next Question'}
+                    </Button>
+                  </Box>
+                </form>
+              </Grid>
+            </Grid>
+          )}
+        </OuterContainer>
+        <Box sx={{ display: 'none' }}>
+          <Button onClick={() => startStreaming()} variant="contained" color="primary">
+            Speak
+          </Button>
+          <Button onClick={handlePauseSpeech} variant="contained" color="primary">
+            Pause Speaking
+          </Button>
+          <Button onClick={handleResumeSpeech} variant="contained" color="primary">
+            Resume Speaking
+          </Button>
+          <Button onClick={handleStopSpeech} variant="contained" color="primary">
+            Stop Speaking
+          </Button>
+        </Box>
+      </div>
     </Container>
   );
 };
