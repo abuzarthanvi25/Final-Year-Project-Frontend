@@ -3,10 +3,10 @@ import { Avatar, Paper, Typography, IconButton, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import VideocamOffIcon from '@mui/icons-material/VideocamOff';
+// import VideocamIcon from '@mui/icons-material/Videocam';
+// import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import Webcam from 'react-webcam'; // Import the webcam library
-import { useState } from 'react';
+// import { useState } from 'react';
 import { useRef } from 'react';
 
 const ControlBar = styled('div')({
@@ -21,8 +21,8 @@ const ControlIconButton = styled(IconButton)(({ theme }) => ({
   fontSize: '12px'
 }));
 
-const VideoTile = ({ name, avatarUrl, isMuted, isCameraOn, handleCameraToggle, disabled, type }) => {
-  const [cameraStream, setCameraStream] = useState(null); // To store the webcam stream
+const VideoTile = ({ name, avatarUrl, isMuted, isCameraOn, disabled, type }) => {
+  // const [cameraStream, setCameraStream] = useState(null); // To store the webcam stream
   const webcamRef = useRef(null); // Ref to the webcam component
 
   const VideoTileRoot = styled(Paper)(({ theme }) => ({
@@ -50,18 +50,18 @@ const VideoTile = ({ name, avatarUrl, isMuted, isCameraOn, handleCameraToggle, d
     transform: !isMuted ? 'scale(1.05)' : 'none'
   }));
 
-  const toggleWebcam = async () => {
-    if (isCameraOn) {
-      if (cameraStream) {
-        cameraStream.getTracks().forEach((track) => track.stop());
-      }
-      setCameraStream(null);
-    } else {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      setCameraStream(stream);
-    }
-    handleCameraToggle(); // Update the camera toggle state
-  };
+  // const toggleWebcam = async () => {
+  //   if (isCameraOn) {
+  //     if (cameraStream) {
+  //       cameraStream.getTracks().forEach((track) => track.stop());
+  //     }
+  //     setCameraStream(null);
+  //   } else {
+  //     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  //     setCameraStream(stream);
+  //   }
+  //   handleCameraToggle(); // Update the camera toggle state
+  // };
 
   return (
     <VideoTileRoot style={{ pointerEvents: disabled ? 'none' : 'all' }} elevation={0}>
@@ -86,7 +86,7 @@ const VideoTile = ({ name, avatarUrl, isMuted, isCameraOn, handleCameraToggle, d
         <ControlIconButton onClick={type.speak}>
           {isMuted ? <MicOffIcon /> : <MicIcon />} {type?.type == 'AI' ? 'Speak Question' : 'Answer Question'}
         </ControlIconButton>
-        {type?.type == 'Interviewee' ? (
+        {/* {type?.type == 'Interviewee' ? (
           <ControlIconButton
             onClick={() => {
               handleCameraToggle();
@@ -95,7 +95,7 @@ const VideoTile = ({ name, avatarUrl, isMuted, isCameraOn, handleCameraToggle, d
           >
             {isCameraOn ? <VideocamIcon /> : <VideocamOffIcon />}
           </ControlIconButton>
-        ) : null}
+        ) : null} */}
       </ControlBar>
     </VideoTileRoot>
   );
