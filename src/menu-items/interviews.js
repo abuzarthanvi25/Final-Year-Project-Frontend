@@ -1,6 +1,5 @@
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 // ==============================|| UTILITIES MENU ITEMS ||============================== //
 
@@ -21,16 +20,8 @@ const pages = {
       id: 'util-color',
       title: 'Past Evaluations',
       type: 'item',
-      url: '/',
+      url: '/past-evaluations',
       icon: EqualizerIcon,
-      breadcrumbs: false
-    },
-    {
-      id: 'util-shadow',
-      title: 'Overall Aptitude Status',
-      type: 'item',
-      url: '/',
-      icon: CheckCircleIcon,
       breadcrumbs: false
     }
   ]

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -39,6 +39,9 @@ import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import ForgotPasswordModal from 'ui-component/custom-components/ForgotPasswordModal';
 
+import { loginUserRequest } from 'store/reducers/userReducer';
+import { unwrapResult } from '@reduxjs/toolkit';
+
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ ...others }) => {
@@ -49,6 +52,7 @@ const FirebaseLogin = ({ ...others }) => {
   const customization = useSelector((state) => state.customization);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -73,11 +77,25 @@ const FirebaseLogin = ({ ...others }) => {
     event.preventDefault();
   };
 
+  const handleLoginUser = (payload) => {
+    setLoading(true);
+    dispatch(loginUserRequest(payload))
+      .then(unwrapResult)
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  };
+
   const handleSignIn = async ({ email, password }) => {
     setError(null);
     try {
       setLoading(true);
       await signIn(email, password);
+      handleLoginUser({ email });
       setLoading(false);
       navigate('/');
     } catch (error) {

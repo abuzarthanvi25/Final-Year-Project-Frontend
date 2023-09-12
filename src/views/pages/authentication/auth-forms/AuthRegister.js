@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -37,6 +37,8 @@ import { strengthColor, strengthIndicator } from 'utils/password-strength';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useAuth } from 'utils/authentication/authProvider';
+import { registerUserRequest } from 'store/reducers/userReducer';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
@@ -51,14 +53,30 @@ const FirebaseRegister = ({ ...others }) => {
   const [strength, setStrength] = useState(0);
   const [level, setLevel] = useState();
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { signUp, currentUser, googleSignIn } = useAuth();
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
+
+  const handleRegisterUser = (payload) => {
+    setLoading(true);
+    dispatch(registerUserRequest(payload))
+      .then(unwrapResult)
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  };
 
   const handleSignUp = async ({ email, password }) => {
     try {
       await signUp(email, password);
+      handleRegisterUser({ username: email?.split('@')[0], email });
       navigate('/');
     } catch (error) {
       setError(error.message);
@@ -298,7 +316,7 @@ const FirebaseRegister = ({ ...others }) => {
                   <AnimateButton>
                     <Button
                       disableElevation
-                      disabled={isSubmitting || !checked}
+                      disabled={isSubmitting || !checked || loading}
                       fullWidth
                       size="large"
                       type="submit"

@@ -75,6 +75,7 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable, 
   }, [tabChanges, interviewStarted]);
 
   const { userDetails, evaluationDetails } = useSelector((state) => state.interview);
+  const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (questions.length > 0) {
@@ -121,6 +122,8 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable, 
       });
   };
 
+  console.log(user);
+
   const handleBeginInterview = () => {
     handleDisable();
     setBeginModalOpen(false);
@@ -138,7 +141,9 @@ const VoiceToVoiceInterview = ({ questions = QS, handleBackStep, handleDisable, 
         user_answer: answer
       }));
       console.log(answersArray);
-      handleEvaluateAnswers(answersArray);
+      if (user?.id) {
+        handleEvaluateAnswers({ answers: answersArray, user_id: user?.id });
+      }
     }
   });
 
