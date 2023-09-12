@@ -9,6 +9,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import CustomLoader from 'ui-component/custom-components/CustomLoader';
 import JobListingCard from 'ui-component/custom-components/JobListingCard';
 import SearchBar from 'ui-component/custom-components/Searchbar';
+import { toTitleCase } from 'utils/helpers';
 
 const JobListings = () => {
   const [loading, setLoading] = useState(false);
@@ -33,8 +34,6 @@ const JobListings = () => {
       handleGetJobListings({ searchQuery });
     }
   };
-
-  console.log(jobListings.count);
 
   useEffect(() => {
     handleGetJobListings();
@@ -62,14 +61,14 @@ const JobListings = () => {
               jobListings?.results.map((job, index) => (
                 <Grid key={index} item md={12} lg={12} sm={12} xs={12}>
                   <JobListingCard
-                    company_name={job?.company_name}
+                    company_name={toTitleCase(job?.company_name ?? '')}
                     date_posted={job?.date_posted}
                     keywords={job?.keywords}
-                    logo={job?.logo}
                     remote={job?.remote}
                     role={job?.role}
                     text={job?.text}
                     url={job?.url}
+                    employment_type={toTitleCase(job?.employment_type ?? '')}
                   />
                 </Grid>
               ))
