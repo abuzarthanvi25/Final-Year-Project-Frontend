@@ -6,7 +6,7 @@ import { Typography, Stack } from '@mui/material';
 const AuthFooter = () => (
   <Stack direction="row" justifyContent="space-between">
     <Typography variant="subtitle2" href="/" underline="hover">
-      skillsift.ai
+      genview.ai
     </Typography>
   </Stack>
 );

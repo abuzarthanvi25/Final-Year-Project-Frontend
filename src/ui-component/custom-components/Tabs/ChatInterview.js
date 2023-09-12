@@ -60,6 +60,7 @@ const ChatInterview = ({ questions = QS, handleBackStep, handleEnable, handleDis
   }, [tabChanges, interviewStarted]);
 
   const { userDetails, evaluationDetails } = useSelector((state) => state.interview);
+  const { user } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
 
@@ -74,7 +75,9 @@ const ChatInterview = ({ questions = QS, handleBackStep, handleEnable, handleDis
         user_answer: answer
       }));
       console.log(answersArray);
-      handleEvaluateAnswers(answersArray);
+      if (user?.id) {
+        handleEvaluateAnswers({ answers: answersArray, user_id: user?.id });
+      }
     }
   });
 

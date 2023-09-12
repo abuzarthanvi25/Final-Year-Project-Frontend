@@ -3,6 +3,8 @@ import { lazy } from 'react';
 // project imports
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
+import PastEvaluations from 'views/past-evaluations';
+import JobListings from 'views/job-listings';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
@@ -37,6 +39,14 @@ const MainRoutes = {
     {
       path: 'take-an-interview',
       element: <TakeAnInterview />
+    },
+    {
+      path: 'past-evaluations',
+      element: <PastEvaluations />
+    },
+    {
+      path: 'job-listings',
+      element: <JobListings />
     }
   ]
 };
