@@ -76,7 +76,7 @@ const ChatInterview = ({ questions = QS, handleBackStep, handleEnable, handleDis
       }));
       console.log(answersArray);
       if (user?.id) {
-        handleEvaluateAnswers({ answers: answersArray, user_id: user?.id });
+        handleEvaluateAnswers({ answers: answersArray, user_id: user?.id, user_name: userDetails?.name });
       }
     }
   });

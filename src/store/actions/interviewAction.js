@@ -21,7 +21,10 @@ async function resetState(payload, thunkAPI) {
 
 async function evaluateAnswers(payload, thunkAPI) {
   try {
-    const response = await ApiResource.post(`${ApiConstants.evaluateAnswers}?user_id=${payload?.user_id}`, payload?.answers);
+    const response = await ApiResource.post(`${ApiConstants.evaluateAnswers}?user_id=${payload?.user_id}`, {
+      data: payload?.answers,
+      user_name: payload?.user_name
+    });
     return response;
   } catch (error) {
     return thunkAPI.rejectWithValue(error);

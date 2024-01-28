@@ -7,7 +7,7 @@ import CustomLoader from 'ui-component/custom-components/CustomLoader';
 import { useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import EvaluationMain from 'ui-component/custom-components/EvaluationMain';
-import { toTitleCase } from 'utils/helpers';
+// import { toTitleCase } from 'utils/helpers';
 
 const PastEvaluations = () => {
   const { user, pastEvaluations } = useSelector((state) => state.user);
@@ -51,7 +51,7 @@ const PastEvaluations = () => {
                       evaluation={evaluation?.evaluation_message}
                       evalutionPoints={evaluation?.evaluation}
                       interviewDate={evaluation?.evaluation_date}
-                      intervieweeName={toTitleCase(evaluation?.user?.username)}
+                      intervieweeName={evaluation?.user_name ?? evaluation.user.username}
                       interviewer="AI BOT"
                     />
                   </Grid>
